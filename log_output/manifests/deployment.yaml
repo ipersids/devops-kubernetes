@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hashgen-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hashgen
+  template:
+    metadata:
+      labels:
+        app: hashgen
+    spec:
+      containers:
+        - name: hashgen
+          image: ipersids/logoutput:ex1.1
