@@ -27,10 +27,10 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-**3. Deploy the application**
+**3. Apply manifests**
 
 ```bash
-kubectl create deployment todo-dep --image=ipersids/todoapp:ex1.2
+kubectl apply -f manifests/
 ```
 
 Verify that the deployment and pod were created:
@@ -56,7 +56,7 @@ Alternatively, using the pod name:
 kubectl logs -f <pod-name>
 ```
 
-By default server listens on PORT 8080, set different one using command:
+By default, the server listens on PORT 8080, set different one using command:
 
 ```bash 
 kubectl set env deployment/todo-dep PORT=5454

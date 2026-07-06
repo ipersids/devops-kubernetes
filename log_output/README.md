@@ -29,10 +29,10 @@ kubectl get nodes
 
 > **Note:** `k3d cluster create` automatically configures `kubectl` to use the new cluster, so `kubectl config use-context k3d-k3s-default` is usually unnecessary unless you've switched to another context.
 
-**3. Deploy the application**
+**3. Apply manifests**
 
 ```bash
-kubectl create deployment hashgenerator-dep --image=ipersids/logoutput:ex1.1
+kubectl apply -f manifests/
 ```
 
 Verify that the deployment and pod were created:
