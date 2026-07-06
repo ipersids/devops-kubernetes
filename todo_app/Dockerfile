@@ -1,7 +1,15 @@
-FROM golang:alpine
+# Build stage
+FROM golang:alpine AS builder
 
 WORKDIR /app
-
 COPY . .
 
-CMD [ "go", "run", "." ]
+RUN go build -o todoapp .
+
+# Runtime stage
+FROM alpine:latest
+
+WORKDIR /app
+COPY --from=builder /app/todoapp ./todoapp
+
+CMD ["./todoapp"]

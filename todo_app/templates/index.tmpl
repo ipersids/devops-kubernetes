@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{.Title}} · Todo</title>
+    <link rel="stylesheet" href="/statics/style.css" />
+  </head>
+  <body>
+    <main class="card">
+      <header>
+        <p class="eyebrow">TODAY</p>
+        <h1>{{.Title}}</h1>
+        <p class="subtitle">Small steps still count.</p>
+      </header>
+
+      <form class="add-form">
+        <label class="sr-only" for="new-todo">New todo</label>
+        <input id="new-todo" name="title" placeholder="What needs to be done?" />
+        <button type="submit">Add</button>
+      </form>
+
+      <ul class="todo-list">
+        {{range .Todos}}
+        <li>
+          <label>
+            <input type="checkbox" {{if .Completed}}checked{{end}} />
+            <span>{{.Title}}</span>
+          </label>
+        </li>
+        {{else}}
+        <li class="empty">Nothing here—enjoy the quiet.</li>
+        {{end}}
+      </ul>
+
+      <footer>{{len .Todos}} tasks</footer>
+    </main>
+  </body>
+</html>
