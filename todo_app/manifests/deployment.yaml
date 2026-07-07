@@ -15,3 +15,11 @@ spec:
       containers:
         - name: todoapp
           image: ipersids/todoapp:ex1.5
+
+          env:
+            - name: PORT
+              value: "3000"
+
+          ports:
+            - name: http
+              containerPort: 3000
