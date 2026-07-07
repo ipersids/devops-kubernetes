@@ -8,3 +8,4 @@ Submissions for the DevOps with Kubernetes course at the University of Helsinki
 | [1.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [1.3](https://github.com/ipersids/devops-kubernetes/tree/1.3) | Log output app: move the deployment into a declarative file. |
 | [1.4](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.4](https://github.com/ipersids/devops-kubernetes/tree/1.4) | Todo app: move the deployment into a declarative file. |
 | [1.5](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.5](https://github.com/ipersids/devops-kubernetes/tree/1.5) | Todo app: add GET / endpoint. |
+| [1.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.6](https://github.com/ipersids/devops-kubernetes/tree/1.6) | Use a NodePort Service to enable access to the Todo app. |
