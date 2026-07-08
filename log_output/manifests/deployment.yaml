@@ -1,17 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hashgen-dep
+  name: logoutput-dep
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hashgen
+      app: logoutput
   template:
     metadata:
       labels:
-        app: hashgen
+        app: logoutput
     spec:
       containers:
-        - name: hashgen
-          image: ipersids/logoutput:ex1.1
+        - name: logoutput
+          image: ipersids/logoutput:ex1.7
+
+          env:
+            - name: PORT
+              value: "3001"
+
+          ports:
+            - name: http
+              containerPort: 3001
