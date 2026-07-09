@@ -10,3 +10,4 @@ Submissions for the DevOps with Kubernetes course at the University of Helsinki
 | [1.5](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.5](https://github.com/ipersids/devops-kubernetes/tree/1.5) | Todo app: add GET / endpoint. |
 | [1.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.6](https://github.com/ipersids/devops-kubernetes/tree/1.6) | Use a NodePort Service to enable access to the Todo app. |
 | [1.7](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [1.7](https://github.com/ipersids/devops-kubernetes/tree/1.7) | Add an endpoint to request the current status in Logoutpu app and an Ingress to access it with a browser. |
+| [1.8](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.8](https://github.com/ipersids/devops-kubernetes/tree/1.8) | Switch to using Ingress instead of NodePort to access the Todo app. |

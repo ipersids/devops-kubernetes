@@ -27,8 +27,6 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-> **Note:** `k3d cluster create` automatically configures `kubectl` to use the new cluster, so `kubectl config use-context k3d-k3s-default` is usually unnecessary unless you've switched to another context.
-
 **3. Apply manifests**
 
 ```bash
@@ -65,4 +63,4 @@ Ensure Ingress is listening on port 80:
 kubectl get svc,ing
 ```
 
-Access the application on `http://localhost:8081`.
+Access the application on `http://localhost:8081/logoutput`.

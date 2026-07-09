@@ -17,7 +17,7 @@ k3d version
 **2. Create a Kubernetes cluster**
 
 ```bash
-k3d cluster create -a 2
+k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
 ```
 
 Verify that the cluster is running:
@@ -40,8 +40,6 @@ kubectl get deployments
 kubectl get pods
 ```
 
-Wait until the pod status is **Running**.
-
 **4. Verify the application output**
 
 Follow the logs:
@@ -63,3 +61,12 @@ kubectl set env deployment/todo-dep PORT=5454
 ```
 
 Should see a message `Server started in port XXXX`.
+
+**5. Access the application in browser**  
+
+Ensure Ingress is listening on port 80:
+```bash
+kubectl get svc,ing
+```
+
+Access the application on `http://localhost:8081`.
