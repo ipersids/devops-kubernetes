@@ -1,4 +1,4 @@
-# Log Output
+# Ping Pong App
 
 **1. Install prerequisites**
 
