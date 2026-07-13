@@ -17,9 +17,14 @@ func main() {
 		log.Fatal("Variable PORT is required")
 	}
 
-	filePath := os.Getenv("FILE_PATH")
-	if filePath == "" {
-		log.Fatal("Variable FILE_PATH is required")
+	logsPath := os.Getenv("LOGS_PATH")
+	if logsPath == "" {
+		log.Fatal("Variable LOGS_PATH is required")
+	}
+
+	pongsPath := os.Getenv("PONGS_PATH")
+	if pongsPath == "" {
+		log.Fatal("Variable PONGS_PATH is required")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -27,17 +32,24 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/logoutput", func(w http.ResponseWriter, r *http.Request) {
-		data, err := os.ReadFile(filePath)
+		logsData, err := os.ReadFile(logsPath)
 		if err != nil {
 			log.Printf("Failed to read file: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		pongsData, err := os.ReadFile(pongsPath)
+		if err != nil {
+			log.Printf("Failed to read file: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		msg := fmt.Sprintf("%s%s", string(logsData), string(pongsData))
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		if _, err := w.Write(data); err != nil {
+		if _, err := w.Write([]byte(msg)); err != nil {
 			log.Printf("writing response: %v", err)
 		}
-		fmt.Printf("%s %s : %s", r.Method, r.Host+r.Pattern, string(data))
+		fmt.Print(msg)
 	})
 
 	addr := fmt.Sprintf(":%s", port)

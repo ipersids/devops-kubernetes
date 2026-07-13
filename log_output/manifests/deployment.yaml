@@ -14,7 +14,8 @@ spec:
     spec:
       volumes:
         - name: shared-file
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: file-claim
       containers:
         - name: logoutput-generator
           image: ipersids/logoutput-generator:ex1.10
@@ -28,15 +29,17 @@ spec:
               value: "/usr/src/app/files/log.txt"
 
         - name: logoutput-reader
-          image: ipersids/logoutput-reader:ex1.10
+          image: ipersids/logoutput-reader:ex1.11
           volumeMounts:
             - name: shared-file
               mountPath: /usr/src/app/files
           env:
             - name: PORT
               value: "3001"
-            - name: "FILE_PATH"
+            - name: LOGS_PATH
               value: "/usr/src/app/files/log.txt"
+            - name: PONGS_PATH
+              value: "/usr/src/app/files/pongs.txt"
           ports:
             - name: http
               containerPort: 3001
