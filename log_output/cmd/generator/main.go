@@ -16,32 +16,21 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("log ouput app: variable PORT is required")
+		log.Fatal("Variable PORT is required")
+	}
+
+	filePath := os.Getenv("FILE_PATH")
+	if filePath == "" {
+		log.Fatal("Variable FILE_PATH is required")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	id := uuid.NewString()
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
-		status := fmt.Sprintf(
-			"%s: %s\n",
-			time.Now().UTC().Format(time.RFC3339),
-			id,
-		)
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		if _, err := w.Write([]byte(status)); err != nil {
-			log.Printf("writing response: %v", err)
-		}
-	})
-
 	addr := fmt.Sprintf(":%s", port)
 
 	server := &http.Server{
 		Addr:         addr,
-		Handler:      mux,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
@@ -59,8 +48,14 @@ func main() {
 		defer ticker.Stop()
 
 		for {
+			id := uuid.NewString()
 			now := time.Now().UTC().Format(time.RFC3339Nano)
-			fmt.Printf("%s: %s\n", now, id)
+			data := fmt.Sprintf("%s: %s\n", now, id)
+			err := os.WriteFile(filePath, []byte(data), 0644)
+			if err != nil {
+				log.Fatal("Faled write data "+data, "FILE_PATH=", filePath)
+			}
+			fmt.Print(data)
 			<-ticker.C
 		}
 	}()

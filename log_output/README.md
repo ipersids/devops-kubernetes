@@ -45,16 +45,9 @@ kubectl get pods
 Follow the logs:
 
 ```bash
-kubectl logs -f deployment/logoutput-dep
+kubectl logs deployment/logoutput-dep -c logoutput-generator
+kubectl logs deployment/logoutput-dep -c logoutput-reader
 ```
-
-Alternatively, using the pod name:
-
-```bash
-kubectl logs -f <pod-name>
-```
-
-Should see a UUID string printed approximately every 5 seconds.
 
 **5. Access the application in browser**  
 

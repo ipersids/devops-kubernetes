@@ -1,2 +1,9 @@
+.git
 .gitignore
-Dockerfile
+.dockerignore
+README.md
+manifests/
+build/
+
+tmp.*
+*.tmp

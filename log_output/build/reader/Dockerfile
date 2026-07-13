@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD [ "go", "run", "." ]
+CMD [ "go", "run", "cmd/reader/main.go" ]
