@@ -43,8 +43,13 @@ h1 {
 }
 
 .subtitle {
-  margin: 12px 0 30px;
+  margin: 12px 0;
   color: #747a6e;
+}
+
+.image {
+  width: min(100%, 500px);
+  margin: 12px 0 30px;
 }
 
 .add-form {

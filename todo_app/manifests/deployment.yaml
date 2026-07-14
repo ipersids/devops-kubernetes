@@ -12,14 +12,22 @@ spec:
       labels:
         app: todoapp
     spec:
+      volumes:
+        - name: shared-file
+          persistentVolumeClaim:
+            claimName: file-claim
+
       containers:
         - name: todoapp
-          image: ipersids/todoapp:ex1.5
-
+          image: ipersids/todoapp:ex1.12
+          volumeMounts:
+            - name: shared-file
+              mountPath: /usr/src/app/files
           env:
             - name: PORT
               value: "3000"
-
+            - name: "VOLUME_DIR"
+              value: "/usr/src/app/files/"
           ports:
             - name: http
               containerPort: 3000
