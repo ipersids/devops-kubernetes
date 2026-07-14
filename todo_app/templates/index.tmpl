@@ -12,14 +12,37 @@
         <p class="eyebrow">TODAY</p>
         <h1>{{.Title}}</h1>
         <p class="subtitle">Small steps still count.</p>
-        <img class="image" src="/image" alt="Random image">
+        <img class="image" src="/image" alt="Random image" />
       </header>
 
       <form class="add-form">
         <label class="sr-only" for="new-todo">New todo</label>
-        <input id="new-todo" name="title" placeholder="What needs to be done?" />
+        <div class="input-wrap">
+          <input
+            id="new-todo"
+            name="title"
+            placeholder="What needs to be done?"
+            maxlength="140"
+            required
+          />
+          <small id="new-todo-counter">0 / 140</small>
+        </div>
         <button type="submit">Add</button>
       </form>
+
+      <script>
+        const input = document.getElementById("new-todo");
+        const counter = document.getElementById("new-todo-counter");
+        const max = input.maxLength;
+
+        function updateCounter() {
+          counter.textContent = `${input.value.length} / ${max}`;
+        }
+
+        updateCounter();
+
+        input.addEventListener("input", updateCounter);
+      </script>
 
       <ul class="todo-list">
         {{range .Todos}}

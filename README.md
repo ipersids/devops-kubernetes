@@ -15,3 +15,4 @@ Submissions for the DevOps with Kubernetes course at the University of Helsinki
 | [1.10](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [1.10](https://github.com/ipersids/devops-kubernetes/tree/1.10) | Split Logoutput app into two containers in one pod and add shared volume (emptyDir). |
 | [1.11](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [1.11](https://github.com/ipersids/devops-kubernetes/tree/1.11) | Share data between "Ping-pong" and "Log output" applications using persistent volumes. |
 | [1.12](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.12](https://github.com/ipersids/devops-kubernetes/tree/1.12) | Get a random picture from Lorem Picsum and display it in Todo app, update picture every 10 minutes. |
+| [1.13](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.13](https://github.com/ipersids/devops-kubernetes/tree/1.13) | Update a Todo app functionality. |

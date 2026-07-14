@@ -58,14 +58,30 @@ h1 {
   margin-bottom: 26px;
 }
 
-.add-form input {
+.input-wrap {
   min-width: 0;
   flex: 1;
+  position: relative;
+}
+
+.add-form input {
+  width: 100%;
   padding: 14px 16px;
+  padding-right: 76px;
   font: inherit;
   border: 1px solid #d8d8ce;
   border-radius: 12px;
   background: white;
+}
+
+#new-todo-counter {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  color: #92968f;
+  font-size: 12px;
+  pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .add-form button {
