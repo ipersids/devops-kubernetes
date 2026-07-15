@@ -12,43 +12,20 @@ import (
 	"time"
 )
 
+var counter atomic.Uint64
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		log.Fatal("pingpong app: variable PORT is required")
 	}
 
-	filePath := os.Getenv("FILE_PATH")
-	if filePath == "" {
-		log.Fatal("Variable FILE_PATH is required")
-	}
-
-	err := os.WriteFile(filePath, []byte("Ping / Pongs: 0"), 0644)
-	if err != nil {
-		log.Fatalf("Failed create file '%s'", filePath)
-	}
-
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	var counter atomic.Uint64
-
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /pingpong", func(w http.ResponseWriter, _ *http.Request) {
-		current := counter.Add(1) - 1
-		status := fmt.Sprintf("Ping / Pongs: %d\n", current)
-		err := os.WriteFile(filePath, []byte(string(status)), 0644)
-		if err != nil {
-			log.Printf("Failed to write file: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		if _, err := w.Write([]byte(status)); err != nil {
-			log.Printf("writing response: %v", err)
-		}
-		fmt.Print(status)
-	})
+	mux.HandleFunc("GET /pingpong", handleRoot)
+	mux.HandleFunc("GET /pings", handlePings)
 
 	addr := fmt.Sprintf(":%s", port)
 
@@ -76,4 +53,26 @@ func main() {
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		log.Fatal("Server forced to shutdown", "error", err)
 	}
+}
+
+// HANDLERS
+
+func handleRoot(w http.ResponseWriter, r *http.Request) {
+	current := counter.Add(1) - 1
+	status := fmt.Sprintf("Ping / Pongs: %d\n", current)
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	if _, err := w.Write([]byte(status)); err != nil {
+		log.Printf("writing response: %v", err)
+	}
+	fmt.Printf("%s -> %d\n", r.Pattern, current)
+}
+
+func handlePings(w http.ResponseWriter, r *http.Request) {
+	current := counter.Load()
+	status := fmt.Sprintf("Ping / Pongs: %d\n", current)
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	if _, err := w.Write([]byte(status)); err != nil {
+		log.Printf("writing response: %v", err)
+	}
+	fmt.Printf("%s -> %d\n", r.Pattern, current)
 }

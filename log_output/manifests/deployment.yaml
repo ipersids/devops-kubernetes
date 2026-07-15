@@ -29,7 +29,7 @@ spec:
               value: "/usr/src/app/files/log.txt"
 
         - name: logoutput-reader
-          image: ipersids/logoutput-reader:ex1.11
+          image: ipersids/logoutput-reader:ex2.1
           volumeMounts:
             - name: shared-file
               mountPath: /usr/src/app/files
@@ -38,8 +38,8 @@ spec:
               value: "3001"
             - name: LOGS_PATH
               value: "/usr/src/app/files/log.txt"
-            - name: PONGS_PATH
-              value: "/usr/src/app/files/pongs.txt"
+            - name: GET_PINGS
+              value: "http://pingpong-svc:2347/pings"
           ports:
             - name: http
               containerPort: 3001

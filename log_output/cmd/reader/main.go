@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,11 @@ import (
 	"syscall"
 	"time"
 )
+
+type LogoutputHandler struct {
+	logsPath string
+	getPings string
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -22,35 +28,21 @@ func main() {
 		log.Fatal("Variable LOGS_PATH is required")
 	}
 
-	pongsPath := os.Getenv("PONGS_PATH")
-	if pongsPath == "" {
-		log.Fatal("Variable PONGS_PATH is required")
+	getPings := os.Getenv("GET_PINGS")
+	if getPings == "" {
+		log.Fatal("Variable GET_PINGS is required")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
+	app := LogoutputHandler{
+		logsPath: logsPath,
+		getPings: getPings,
+	}
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/logoutput", func(w http.ResponseWriter, r *http.Request) {
-		logsData, err := os.ReadFile(logsPath)
-		if err != nil {
-			log.Printf("Failed to read file: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		pongsData, err := os.ReadFile(pongsPath)
-		if err != nil {
-			log.Printf("Failed to read file: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		msg := fmt.Sprintf("%s%s", string(logsData), string(pongsData))
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		if _, err := w.Write([]byte(msg)); err != nil {
-			log.Printf("writing response: %v", err)
-		}
-		fmt.Print(msg)
-	})
+	mux.HandleFunc("/logoutput", app.handleLogoutput)
 
 	addr := fmt.Sprintf(":%s", port)
 
@@ -78,4 +70,36 @@ func main() {
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		log.Fatal("Server forced to shutdown", "error", err)
 	}
+}
+
+// HANDLERS
+
+func (lh *LogoutputHandler) handleLogoutput(w http.ResponseWriter, r *http.Request) {
+	logsData, err := os.ReadFile(lh.logsPath)
+	if err != nil {
+		log.Printf("Failed to read file: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	resp, err := http.Get(lh.getPings)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		log.Printf("Fetching pings failed: error: %v", err)
+		http.Error(w, "Pingpong service is not available", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	pongsData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Reading pings response body failed: error: %v", err)
+		http.Error(w, "Somthing went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	msg := fmt.Sprintf("%s%s", string(logsData), string(pongsData))
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	if _, err := w.Write([]byte(msg)); err != nil {
+		log.Printf("writing response: %v", err)
+	}
+	fmt.Print(msg)
 }

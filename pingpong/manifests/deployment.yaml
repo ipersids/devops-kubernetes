@@ -12,22 +12,12 @@ spec:
       labels:
         app: pingpong
     spec:
-      volumes:
-        - name: shared-file
-          persistentVolumeClaim:
-            claimName: file-claim
-
       containers:
         - name: pingpong
-          image: ipersids/pingpong:ex1.11
-          volumeMounts:
-            - name: shared-file
-              mountPath: /usr/src/app/files
+          image: ipersids/pingpong:ex2.1
           env:
             - name: PORT
               value: "3002"
-            - name: "FILE_PATH"
-              value: "/usr/src/app/files/pongs.txt"
           ports:
             - name: http
               containerPort: 3002
