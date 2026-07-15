@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todobackend-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: todobackend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 2348
+      targetPort: http

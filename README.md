@@ -40,6 +40,7 @@ kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
 kubectl apply -f log_output/manifests
 kubectl apply -f pingpong/manifests
 kubectl apply -f todo_app/manifests
+kubectl apply -f todo_backend/manifests
 ```
 
 Check that the storage and pods are ready:
@@ -81,3 +82,4 @@ Open the apps through Ingress:
 | [1.12](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.12](https://github.com/ipersids/devops-kubernetes/tree/1.12) | Get a random picture from Lorem Picsum and display it in Todo app, update picture every 10 minutes. |
 | [1.13](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.13](https://github.com/ipersids/devops-kubernetes/tree/1.13) | Update a Todo app functionality. |
 | [2.1](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.1](https://github.com/ipersids/devops-kubernetes/tree/2.1) | Connect the Log output application and the Ping-pong application with HTTP. Remove the shared volume between those two applications. |
+| [2.2](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.2](https://github.com/ipersids/devops-kubernetes/tree/2.2) | Create a Todo backend service. It should have a GET /todos endpoint for fetching the list of todos and a POST /todos endpoint for creating a new todo. |

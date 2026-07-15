@@ -27,3 +27,10 @@ spec:
                 name: pingpong-svc
                 port:
                   number: 2347
+          - path: /todos
+            pathType: Prefix
+            backend:
+              service:
+                name: todobackend-svc
+                port:
+                  number: 2348
