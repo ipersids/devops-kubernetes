@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: logoutput-dep
+  namespace: exercises
 spec:
   replicas: 1
   selector:
@@ -13,14 +14,13 @@ spec:
         app: logoutput
     spec:
       volumes:
-        - name: shared-file
-          persistentVolumeClaim:
-            claimName: file-claim
+        - name: shared-data
+          emptyDir: {}
       containers:
         - name: logoutput-generator
           image: ipersids/logoutput-generator:ex1.10
           volumeMounts:
-            - name: shared-file
+            - name: shared-data
               mountPath: /usr/src/app/files
           env:
             - name: PORT
@@ -31,7 +31,7 @@ spec:
         - name: logoutput-reader
           image: ipersids/logoutput-reader:ex2.1
           volumeMounts:
-            - name: shared-file
+            - name: shared-data
               mountPath: /usr/src/app/files
           env:
             - name: PORT

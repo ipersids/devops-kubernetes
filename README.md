@@ -9,6 +9,7 @@ Submissions for the DevOps with Kubernetes course at the University of Helsinki
 - Docker
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [k3d](https://github.com/k3d-io/k3d#get)
+- [kubectx + kubens](https://github.com/ahmetb/kubectx)
 
 Verify the installation:
 
@@ -22,6 +23,8 @@ k3d version
 
 ```bash
 k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
+# create folder for PersistentVolume
+docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
 ```
 
 The manifests include a local `PersistentVolume` that is pinned to the first k3d agent node:
@@ -83,3 +86,4 @@ Open the apps through Ingress:
 | [1.13](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.13](https://github.com/ipersids/devops-kubernetes/tree/1.13) | Update a Todo app functionality. |
 | [2.1](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.1](https://github.com/ipersids/devops-kubernetes/tree/2.1) | Connect the Log output application and the Ping-pong application with HTTP. Remove the shared volume between those two applications. |
 | [2.2](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.2](https://github.com/ipersids/devops-kubernetes/tree/2.2) | Create a Todo backend service. It should have a GET /todos endpoint for fetching the list of todos and a POST /todos endpoint for creating a new todo. |
+| [2.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.3](https://github.com/ipersids/devops-kubernetes/tree/2.3) | Move the Log output and Pingpong apps to `exercises` namespace. |
