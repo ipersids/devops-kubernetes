@@ -1,22 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: logoutput-ingress
+  name: todo-ingress
 spec:
   rules:
     - http:
         paths:
-          - path: /logoutput
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: logoutput-svc
+                name: todoapp-svc
                 port:
-                  number: 2345
-          - path: /pingpong
+                  number: 2346
+          - path: /todos
             pathType: Prefix
             backend:
               service:
-                name: pingpong-svc
+                name: todobackend-svc
                 port:
-                  number: 2347
+                  number: 2348
