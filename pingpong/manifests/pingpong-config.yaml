@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pingpong-conf
+  namespace: exercises
+data:
+  port: "3002"
+  postgres_host: "postgres-svc"
+  postgres_port: "5432"
+  postgres_db: "pingpong"
+  postgres_user: "pingpong"

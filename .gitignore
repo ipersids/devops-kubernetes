@@ -34,3 +34,7 @@ go.work.sum
 *.tmp
 tmp.*
 tmp/
+
+secrets/
+*secret*.yaml
+!secret.enc.yaml

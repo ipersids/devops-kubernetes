@@ -9,7 +9,9 @@ Submissions for the DevOps with Kubernetes course at the University of Helsinki
 - Docker
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [k3d](https://github.com/k3d-io/k3d#get)
-- [kubectx + kubens](https://github.com/ahmetb/kubectx)
+- [kubectx + kubens](https://github.com/ahmetb/kubectx) (optional)
+- [SOPS: Secrets OPerationS](https://github.com/getsops/sops)
+- [age: File encryption](https://github.com/FiloSottile/age) (optional)
 
 Verify the installation:
 
@@ -17,6 +19,7 @@ Verify the installation:
 docker --version
 kubectl version --client
 k3d version
+sops --version --check-for-updates
 ```
 
 #### 2. Create a Kubernetes cluster
@@ -39,9 +42,15 @@ If your cluster/node names are different, update `manifests/persistentvolume.yam
 
 ```bash
 kubectl apply -f manifests/
-kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
+
+export SOPS_AGE_KEY_FILE=$(pwd)/secrets/key.txt
+sops --decrypt pingpong/manifests/enc/secret.enc.yaml | kubectl apply -f -
+
 kubectl apply -f todo_app/manifests/todoapp-config.yaml
 kubectl apply -f log_output/manifests/logoutput-config.yaml
+kubectl apply -f pingpong/manifests/pingpong-config.yaml
+kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
+kubectl apply -f pingpong/manifests/database.yaml
 kubectl apply -f log_output/manifests
 kubectl apply -f pingpong/manifests
 kubectl apply -f todo_app/manifests
@@ -92,3 +101,4 @@ Open the apps through Ingress:
 | [2.4](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.4](https://github.com/ipersids/devops-kubernetes/tree/2.4) | Move the Todo client and Todo backend to `project` namespace. |
 | [2.5](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.5](https://github.com/ipersids/devops-kubernetes/tree/2.5) | Create a ConfigMap for the Log output application to define one file information.txt and env variable MESSAGE. |
 | [2.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.6](https://github.com/ipersids/devops-kubernetes/tree/2.6) | Pass all the configurations to Todo as env variables that are defined either in a config map or in deployments. |
+| [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a stateful set (with one replica) and save the Pingpong application counter into the database. |

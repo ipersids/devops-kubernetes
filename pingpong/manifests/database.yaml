@@ -1,27 +1,40 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: pingpong-dep
+  name: postgres-svc
+  namespace: exercises
+  labels:
+    app: postgres
+spec:
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+  clusterIP: None
+  selector:
+    app: postgresapp
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: posgres-stset
   namespace: exercises
 spec:
+  serviceName: postgres-svc
   replicas: 1
   selector:
     matchLabels:
-      app: pingpong
+      app: postgresapp
   template:
     metadata:
       labels:
-        app: pingpong
+        app: postgresapp
     spec:
       containers:
-        - name: pingpong
-          image: ipersids/pingpong:ex2.7
+        - name: postgres
+          image: postgres:18-alpine
           env:
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: pingpong-conf
-                  key: port
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
@@ -47,8 +60,18 @@ spec:
                 secretKeyRef:
                   name: pingpong-secret
                   key: POSTGRES_PASSWORD
-            - name: DB_URL
-              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)"
           ports:
-            - name: http
-              containerPort: 3002
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-data-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi
