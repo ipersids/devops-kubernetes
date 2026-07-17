@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todoapp-conf
+  namespace: project
+data:
+  port: "3000"
+  volume_dir: "/usr/src/app/files/"
+  todo_backend_url: "http://todobackend-svc:2348"

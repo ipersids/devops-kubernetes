@@ -26,11 +26,20 @@ spec:
               mountPath: /usr/src/app/files
           env:
             - name: PORT
-              value: "3000"
+              valueFrom:
+                configMapKeyRef:
+                  name: todoapp-conf
+                  key: port
             - name: "VOLUME_DIR"
-              value: "/usr/src/app/files/"
+              valueFrom:
+                configMapKeyRef:
+                  name: todoapp-conf
+                  key: volume_dir
             - name: TODO_BACKEND_URL
-              value: "http://todobackend-svc:2348"
+              valueFrom:
+                configMapKeyRef:
+                  name: todoapp-conf
+                  key: todo_backend_url
           ports:
             - name: http
               containerPort: 3000
