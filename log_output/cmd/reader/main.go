@@ -13,8 +13,10 @@ import (
 )
 
 type LogoutputHandler struct {
-	logsPath string
-	getPings string
+	logsPath     string
+	getPingsURL  string
+	msgENV       string
+	infoFilePath string
 }
 
 func main() {
@@ -28,17 +30,29 @@ func main() {
 		log.Fatal("Variable LOGS_PATH is required")
 	}
 
-	getPings := os.Getenv("GET_PINGS")
-	if getPings == "" {
+	getPingsURL := os.Getenv("GET_PINGS")
+	if getPingsURL == "" {
 		log.Fatal("Variable GET_PINGS is required")
+	}
+
+	msgENV := os.Getenv("MESSAGE")
+	if msgENV == "" {
+		log.Fatal("Variable MESSAGE is required")
+	}
+
+	infoFilePath := os.Getenv("INFO_FILE_PATH")
+	if infoFilePath == "" {
+		log.Fatal("Variable INFO_FILE_PATH is required")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
 	app := LogoutputHandler{
-		logsPath: logsPath,
-		getPings: getPings,
+		logsPath:     logsPath,
+		getPingsURL:  getPingsURL,
+		msgENV:       msgENV,
+		infoFilePath: infoFilePath,
 	}
 
 	mux := http.NewServeMux()
@@ -81,7 +95,15 @@ func (lh *LogoutputHandler) handleLogoutput(w http.ResponseWriter, r *http.Reque
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	resp, err := http.Get(lh.getPings)
+
+	infoData, err := os.ReadFile(lh.infoFilePath)
+	if err != nil {
+		log.Printf("Failed to read file: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	resp, err := http.Get(lh.getPingsURL)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		log.Printf("Fetching pings failed: error: %v", err)
 		http.Error(w, "Pingpong service is not available", http.StatusInternalServerError)
@@ -96,10 +118,10 @@ func (lh *LogoutputHandler) handleLogoutput(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	msg := fmt.Sprintf("%s%s", string(logsData), string(pongsData))
+	message := fmt.Sprintf("file content: %s\nenv variable: MESSAGE=%s\n%s%s", string(infoData), lh.msgENV, string(logsData), string(pongsData))
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	if _, err := w.Write([]byte(msg)); err != nil {
+	if _, err := w.Write([]byte(message)); err != nil {
 		log.Printf("writing response: %v", err)
 	}
-	fmt.Print(msg)
+	fmt.Print(message)
 }

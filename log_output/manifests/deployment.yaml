@@ -16,6 +16,13 @@ spec:
       volumes:
         - name: shared-data
           emptyDir: {}
+        - name: config
+          configMap:
+            name: logoutput-conf
+            items:
+              - key: "information.txt"
+                path: "information.txt"
+
       containers:
         - name: logoutput-generator
           image: ipersids/logoutput-generator:ex1.10
@@ -29,17 +36,39 @@ spec:
               value: "/usr/src/app/files/log.txt"
 
         - name: logoutput-reader
-          image: ipersids/logoutput-reader:ex2.1
+          image: ipersids/logoutput-reader:ex2.5
           volumeMounts:
             - name: shared-data
               mountPath: /usr/src/app/files
+            - name: config
+              mountPath: "/config"
+              readOnly: true
           env:
             - name: PORT
-              value: "3001"
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conf
+                  key: port
             - name: LOGS_PATH
-              value: "/usr/src/app/files/log.txt"
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conf
+                  key: logs_path
             - name: GET_PINGS
-              value: "http://pingpong-svc:2347/pings"
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conf
+                  key: get_pings
+            - name: INFO_FILE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conf
+                  key: info_file_path
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conf
+                  key: message
           ports:
             - name: http
               containerPort: 3001

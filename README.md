@@ -40,6 +40,7 @@ If your cluster/node names are different, update `manifests/persistentvolume.yam
 ```bash
 kubectl apply -f manifests/
 kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
+kubectl apply -f log_output/manifests/logoutput-config.yaml
 kubectl apply -f log_output/manifests
 kubectl apply -f pingpong/manifests
 kubectl apply -f todo_app/manifests
@@ -88,3 +89,4 @@ Open the apps through Ingress:
 | [2.2](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.2](https://github.com/ipersids/devops-kubernetes/tree/2.2) | Create a Todo backend service. It should have a GET /todos endpoint for fetching the list of todos and a POST /todos endpoint for creating a new todo. |
 | [2.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.3](https://github.com/ipersids/devops-kubernetes/tree/2.3) | Move the Log output and Pingpong apps to `exercises` namespace. |
 | [2.4](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.4](https://github.com/ipersids/devops-kubernetes/tree/2.4) | Move the Todo client and Todo backend to `project` namespace. |
+| [2.5](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.5](https://github.com/ipersids/devops-kubernetes/tree/2.5) | Create a ConfigMap for the Log output application to define one file information.txt and env variable MESSAGE. |

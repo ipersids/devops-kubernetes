@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logoutput-conf
+  namespace: exercises
+data:
+  # property-like keys
+  message: "hello world"
+  port: "3001"
+  logs_path: "/usr/src/app/files/log.txt"
+  get_pings: "http://pingpong-svc:2347/pings"
+  info_file_path: "/config/information.txt"
+  # file-like keys
+  information.txt: |
+    this text is from file
