@@ -59,6 +59,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("GET /statics/", http.FileServerFS(files))
 	mux.HandleFunc("GET /", app.handleRoot)
+	mux.HandleFunc("POST /task", app.handleCreateTask)
 	mux.HandleFunc("GET /image", app.handleImage)
 
 	addr := fmt.Sprintf(":%s", port)

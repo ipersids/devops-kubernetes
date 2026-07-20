@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"sync"
 	"text/template"
@@ -102,6 +103,40 @@ func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, _ *http.Request) {
 	if err := tdh.tmpl.Execute(w, data); err != nil {
 		log.Printf("render page: %v", err)
 	}
+}
+
+func (tdh *todoAppHandler) handleCreateTask(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form", http.StatusBadRequest)
+		return
+	}
+
+	title := r.FormValue("title")
+
+	if title == "" || len(title) > 140 {
+		http.Error(w, "Title should be between 1 and 140 bytes", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := http.PostForm(
+		tdh.todoBackendURL+"/todos",
+		url.Values{
+			"title": {title},
+		},
+	)
+	if err != nil {
+		http.Error(w, "backend unavailable", http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated &&
+		resp.StatusCode != http.StatusOK {
+		http.Error(w, "backend error", http.StatusBadGateway)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // HELPERS
