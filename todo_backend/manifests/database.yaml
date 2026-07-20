@@ -1,27 +1,40 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: todobackend-dep
+  name: todopostgres-svc
+  namespace: project
+  labels:
+    app: postgres
+spec:
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+  clusterIP: None
+  selector:
+    app: todopostgresapp
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todoposgres-stset
   namespace: project
 spec:
+  serviceName: todopostgres-svc
   replicas: 1
   selector:
     matchLabels:
-      app: todobackend
+      app: todopostgresapp
   template:
     metadata:
       labels:
-        app: todobackend
+        app: todopostgresapp
     spec:
       containers:
-        - name: todobackend
-          image: ipersids/todobackend:ex2.8
+        - name: postgres
+          image: postgres:18-alpine
           env:
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: todobackend-conf
-                  key: port
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
@@ -47,8 +60,20 @@ spec:
                 secretKeyRef:
                   name: todobackend-secret
                   key: POSTGRES_PASSWORD
-            - name: DB_URL
-              value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)"
+            - name: PGDATA
+              value: /data/pgdata
           ports:
-            - name: http
-              containerPort: 3003
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-data-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi

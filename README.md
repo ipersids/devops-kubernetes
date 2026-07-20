@@ -45,16 +45,22 @@ kubectl apply -f manifests/
 
 export SOPS_AGE_KEY_FILE=$(pwd)/secrets/key.txt
 sops --decrypt pingpong/manifests/enc/secret.enc.yaml | kubectl apply -f -
+sops --decrypt todo_backend/manifests/enc/secret.enc.yaml | kubectl apply -f -
 
 kubectl apply -f todo_app/manifests/todoapp-config.yaml
-kubectl apply -f log_output/manifests/logoutput-config.yaml
-kubectl apply -f pingpong/manifests/pingpong-config.yaml
 kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
-kubectl apply -f pingpong/manifests/database.yaml
-kubectl apply -f log_output/manifests
-kubectl apply -f pingpong/manifests
 kubectl apply -f todo_app/manifests
+
+kubectl apply -f todo_backend/manifests/todobackeng-config.yaml
+kubectl apply -f todo_backend/manifests/database.yaml
 kubectl apply -f todo_backend/manifests
+
+kubectl apply -f log_output/manifests/logoutput-config.yaml
+kubectl apply -f log_output/manifests
+
+kubectl apply -f pingpong/manifests/pingpong-config.yaml
+kubectl apply -f pingpong/manifests/database.yaml
+kubectl apply -f pingpong/manifests
 ```
 
 Check that the storage and pods are ready:
@@ -102,3 +108,4 @@ Open the apps through Ingress:
 | [2.5](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.5](https://github.com/ipersids/devops-kubernetes/tree/2.5) | Create a ConfigMap for the Log output application to define one file information.txt and env variable MESSAGE. |
 | [2.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.6](https://github.com/ipersids/devops-kubernetes/tree/2.6) | Pass all the configurations to Todo as env variables that are defined either in a config map or in deployments. |
 | [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a stateful set (with one replica) and save the Pingpong application counter into the database. |
+| [2.8](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.8](https://github.com/ipersids/devops-kubernetes/tree/2.8) | Run a Postgres database as a stateful set (with one replica) and save the Todo tasks into the database. |
