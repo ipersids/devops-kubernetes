@@ -61,6 +61,8 @@ kubectl apply -f log_output/manifests
 kubectl apply -f pingpong/manifests/pingpong-config.yaml
 kubectl apply -f pingpong/manifests/database.yaml
 kubectl apply -f pingpong/manifests
+
+kubectl apply -f  todo_cron/manifests/todo-cron.yaml
 ```
 
 Check that the storage and pods are ready:
@@ -109,3 +111,4 @@ Open the apps through Ingress:
 | [2.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.6](https://github.com/ipersids/devops-kubernetes/tree/2.6) | Pass all the configurations to Todo as env variables that are defined either in a config map or in deployments. |
 | [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a stateful set (with one replica) and save the Pingpong application counter into the database. |
 | [2.8](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.8](https://github.com/ipersids/devops-kubernetes/tree/2.8) | Run a Postgres database as a stateful set (with one replica) and save the Todo tasks into the database. |
+| [2.9](https://github.com/ipersids/devops-kubernetes/tree/main/todo_cron) | [2.9](https://github.com/ipersids/devops-kubernetes/tree/2.9) | Create a CronJob that generates a new todo every hour to remind to read a random wikipedia article. |

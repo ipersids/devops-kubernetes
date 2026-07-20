@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: todo-cron
+  namespace: project
+spec:
+  schedule: "0 * * * *" # Every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+            - name: create-wiki-reading-task
+              image: ipersids/todocron:ex2.9
+              command:
+                - /usr/local/bin/create-random-wiki-reading-task.sh
+
+              env:
+                - name: TODO_BACKEND_URL
+                  value: "http://todobackend-svc:2348"
