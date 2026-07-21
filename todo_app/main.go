@@ -5,7 +5,6 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,20 +12,25 @@ import (
 	"syscall"
 	"text/template"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 //go:embed templates statics
 var files embed.FS
 
 func main() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("Variable PORT is required")
+		log.Fatal().Msg("Variable PORT is required")
 	}
 
 	volumeDir := os.Getenv("VOLUME_DIR")
 	if volumeDir == "" {
-		log.Fatal("Variable VOLUME_DIR is required")
+		log.Fatal().Msg("Variable VOLUME_DIR is required")
 	}
 
 	todoBackendURL := os.Getenv("TODO_BACKEND_URL")
@@ -39,7 +43,7 @@ func main() {
 	}
 
 	if err != nil {
-		log.Fatalf("Failed download image on start")
+		log.Fatal().Msg("Failed download image on start")
 	}
 
 	tmpl := template.Must(template.ParseFS(files, "templates/index.tmpl"))
@@ -73,9 +77,9 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("Server started in port %s", port)
+		log.Info().Msgf("Server started in port %s", port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("Server failed to start", "error", err)
+			log.Fatal().Msgf("Server failed to start", "error", err)
 		}
 	}()
 
@@ -86,6 +90,6 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Fatal("Server forced to shutdown", "error", err)
+		log.Fatal().Msgf("Server forced to shutdown", "error", err)
 	}
 }

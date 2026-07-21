@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"sync"
 	"text/template"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type todo struct {
@@ -44,6 +46,7 @@ func (tdh *todoAppHandler) handleImage(w http.ResponseWriter, r *http.Request) {
 	info, err := os.Stat(imagePath)
 	if err != nil {
 		tdh.mu.Unlock()
+		logger(r, http.StatusInternalServerError).Msg("image not found")
 		http.Error(w, "image not found", http.StatusInternalServerError)
 		return
 	}
@@ -61,25 +64,26 @@ func (tdh *todoAppHandler) handleImage(w http.ResponseWriter, r *http.Request) {
 			}()
 
 			if err := downloadAndReplaceImage(tdh.volumeDir, tdh.imageName); err != nil {
-				log.Printf("failed to refresh image: %v", err)
+				logger(r, http.StatusInternalServerError).Err(err).Msg("failed to refresh image")
 			}
 		}()
 	}
 
 	tdh.mu.Unlock()
 
+	logger(r, http.StatusOK).Msg("successful request")
 	http.ServeFile(w, r, imagePath)
 }
 
-func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, _ *http.Request) {
+func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get(tdh.todoBackendURL + "/todos")
 	if err != nil {
-		log.Printf("Failed send request: error: %v", err)
+		logger(r, http.StatusInternalServerError).Err(err).Msg("failed to send request")
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("Unexpected todo backend response status: %v", err)
+		logger(r, http.StatusInternalServerError).Err(err).Msg("unexpected todo backend response status")
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
@@ -88,7 +92,7 @@ func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, _ *http.Request) {
 	decoder := json.NewDecoder(resp.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&req); err != nil {
-		log.Printf("Get todos: mailformed backend response body: %v", err)
+		logger(r, http.StatusInternalServerError).Err(err).Msg("mailformed backend response body")
 		http.Error(w, "Failed fetch todos", http.StatusInternalServerError)
 		return
 	}
@@ -101,12 +105,16 @@ func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	if err := tdh.tmpl.Execute(w, data); err != nil {
-		log.Printf("render page: %v", err)
+		logger(r, http.StatusInternalServerError).Err(err).Msg("failed to execute template")
+		return
 	}
+
+	logger(r, http.StatusOK).Msg("successful request")
 }
 
 func (tdh *todoAppHandler) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		logger(r, http.StatusBadRequest).Err(err).Msg("invalid form")
 		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
@@ -114,6 +122,7 @@ func (tdh *todoAppHandler) handleCreateTask(w http.ResponseWriter, r *http.Reque
 	title := r.FormValue("title")
 
 	if title == "" || len(title) > 140 {
+		logger(r, http.StatusBadRequest).Msg("title should be between 1 and 140 bytes")
 		http.Error(w, "Title should be between 1 and 140 bytes", http.StatusBadRequest)
 		return
 	}
@@ -125,6 +134,7 @@ func (tdh *todoAppHandler) handleCreateTask(w http.ResponseWriter, r *http.Reque
 		},
 	)
 	if err != nil {
+		logger(r, http.StatusBadGateway).Msg("backend unavailable")
 		http.Error(w, "backend unavailable", http.StatusBadGateway)
 		return
 	}
@@ -132,10 +142,12 @@ func (tdh *todoAppHandler) handleCreateTask(w http.ResponseWriter, r *http.Reque
 
 	if resp.StatusCode != http.StatusCreated &&
 		resp.StatusCode != http.StatusOK {
+		logger(r, http.StatusBadGateway).Msg("backend error")
 		http.Error(w, "backend error", http.StatusBadGateway)
 		return
 	}
 
+	logger(r, http.StatusSeeOther).Msg("task created, redirecting to main page")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -161,4 +173,18 @@ func downloadAndReplaceImage(path string, fileName string) error {
 	}
 
 	return os.Rename(tmp, path+fileName)
+}
+
+func logger(r *http.Request, status int) *zerolog.Event {
+	logger := log.Info()
+	if status >= 400 {
+		logger = log.Error()
+	}
+
+	return logger.
+		Str("method", r.Method).
+		Str("path", r.URL.Path).
+		Int("status", status).
+		Str("remote_addr", r.RemoteAddr).
+		Str("user_agent", r.UserAgent())
 }

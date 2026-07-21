@@ -20,7 +20,7 @@ spec:
 
       containers:
         - name: todoapp
-          image: ipersids/todoapp:ex2.9
+          image: ipersids/todoapp:ex2.10
           volumeMounts:
             - name: shared-file
               mountPath: /usr/src/app/files
