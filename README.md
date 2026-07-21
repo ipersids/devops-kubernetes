@@ -86,6 +86,10 @@ Open the apps through Ingress:
 - Log output: <http://localhost:8081/logoutput>
 - Ping-pong: <http://localhost:8081/pingpong>
 
+#### 5. Enable monitoring using Grafana
+
+Follow instractions from [monitoring README.md](https://github.com/ipersids/devops-kubernetes/tree/main/monitoring/README.md)
+
 ## Course tasks
 
 | Exercise | Tag | Description |
@@ -112,3 +116,4 @@ Open the apps through Ingress:
 | [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a stateful set (with one replica) and save the Pingpong application counter into the database. |
 | [2.8](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.8](https://github.com/ipersids/devops-kubernetes/tree/2.8) | Run a Postgres database as a stateful set (with one replica) and save the Todo tasks into the database. |
 | [2.9](https://github.com/ipersids/devops-kubernetes/tree/main/todo_cron) | [2.9](https://github.com/ipersids/devops-kubernetes/tree/2.9) | Create a CronJob that generates a new todo every hour to remind to read a random wikipedia article. |
+| [2.10](https://github.com/ipersids/devops-kubernetes/tree/main/monitoring) | [2.10](https://github.com/ipersids/devops-kubernetes/tree/2.10) | Add request logging so that you can monitor every todo that is sent to the backend. |
