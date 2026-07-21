@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,6 +12,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -70,12 +71,12 @@ type todoResponse struct {
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("Variable PORT is required")
+		log.Fatal().Msg("Variable PORT is required")
 	}
 
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
-		log.Fatal("pingpong app: variable DB_URL is required")
+		log.Fatal().Msg("pingpong app: variable DB_URL is required")
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -83,22 +84,22 @@ func main() {
 
 	db, err := sql.Open("pgx", dbURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("failed to connect to database")
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("failed to connect to database")
 	}
 
 	_, err = db.Exec(createTodosTable)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("failed to connect to database")
 	}
 
 	app := store{db: db}
 
-	log.Println("Connected to PostgreSQL")
+	log.Info().Msg("Connected to PostgreSQL")
 
 	mux := http.NewServeMux()
 
@@ -116,9 +117,9 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("Server started in port %s", port)
+		log.Info().Msgf("Server started in port %s", port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("Server failed to start", "error", err)
+			log.Fatal().Err(err).Msg("Server failed to start")
 		}
 	}()
 
@@ -129,13 +130,14 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Fatal("Server forced to shutdown", "error", err)
+		log.Fatal().Err(err).Msg("Server forced to shutdown")
 	}
 }
 
 func (s *store) handleTodos(w http.ResponseWriter, r *http.Request) {
 	todos, err := s.getTodos()
 	if err != nil {
+		logger(r, http.StatusInternalServerError).Err(err).Msg("failed to get todos from database")
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
@@ -145,13 +147,16 @@ func (s *store) handleTodos(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(todoResponse{Data: todos})
 
 	if err != nil {
-		log.Printf("Failed encode response: error: %v", err)
+		log.Error().Err(err).Msg("failed encode response")
+		return
 	}
+
+	logger(r, http.StatusOK).Msg("successful request")
 }
 
 func (s *store) handleCreateTodo(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		log.Printf("New task: failed to parse form: %v", err)
+		logger(r, http.StatusBadRequest).Err(err).Msg("failed to parse form")
 		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
@@ -159,18 +164,20 @@ func (s *store) handleCreateTodo(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 
 	if title == "" || len(title) > 140 {
+		logger(r, http.StatusBadRequest).Msg("title should be between 1 and 140 bytes")
 		http.Error(w, "Title should be between 1 and 140 bytes", http.StatusBadRequest)
 		return
 	}
 
 	_, err := s.db.Exec(insertTask, title)
 	if err != nil {
-		log.Printf("New task: failed to insert: %v", err)
+		logger(r, http.StatusInternalServerError).Err(err).Msg("failed to add a new task to database")
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	logger(r, http.StatusCreated).Msg("successful request")
 }
 
 // Database
@@ -200,4 +207,21 @@ func (s *store) getTodos() ([]todo, error) {
 	}
 
 	return todos, nil
+}
+
+// Logging
+
+func logger(r *http.Request, status int) *zerolog.Event {
+	logger := log.Info()
+	if status >= 400 {
+		logger = log.Error()
+	}
+
+	return logger.
+		Str("method", r.Method).
+		Str("host", r.Host).
+		Str("path", r.URL.Path).
+		Int("status", status).
+		Str("remote_addr", r.RemoteAddr).
+		Str("user_agent", r.UserAgent())
 }

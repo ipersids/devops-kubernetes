@@ -82,6 +82,8 @@ func (tdh *todoAppHandler) handleRoot(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		logger(r, http.StatusInternalServerError).Err(err).Msg("unexpected todo backend response status")
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
@@ -183,6 +185,7 @@ func logger(r *http.Request, status int) *zerolog.Event {
 
 	return logger.
 		Str("method", r.Method).
+		Str("host", r.Host).
 		Str("path", r.URL.Path).
 		Int("status", status).
 		Str("remote_addr", r.RemoteAddr).

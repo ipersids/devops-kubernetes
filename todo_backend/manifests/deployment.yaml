@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: todobackend
-          image: ipersids/todobackend:ex2.9
+          image: ipersids/todobackend:ex2.10
           env:
             - name: PORT
               valueFrom:
