@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: pingpong
-          image: ipersids/pingpong:ex2.7
+          image: ipersids/pingpong:ex3.1-multiarch
           env:
             - name: PORT
               valueFrom:
