@@ -25,7 +25,7 @@ spec:
 
       containers:
         - name: logoutput-generator
-          image: ipersids/logoutput-generator:ex1.10
+          image: ipersids/logoutput-generator:ex3.2-multiarch
           volumeMounts:
             - name: shared-data
               mountPath: /usr/src/app/files
@@ -36,7 +36,7 @@ spec:
               value: "/usr/src/app/files/log.txt"
 
         - name: logoutput-reader
-          image: ipersids/logoutput-reader:ex2.5
+          image: ipersids/logoutput-reader:ex3.2-multiarch
           volumeMounts:
             - name: shared-data
               mountPath: /usr/src/app/files

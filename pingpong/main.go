@@ -80,6 +80,10 @@ func main() {
 	mux.HandleFunc("GET /pingpong", app.handleRoot)
 	mux.HandleFunc("GET /pings", app.handlePings)
 
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
 	addr := fmt.Sprintf(":%s", port)
 
 	server := &http.Server{

@@ -4,7 +4,7 @@ metadata:
   name: logoutput-svc
   namespace: exercises
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: logoutput
   ports:

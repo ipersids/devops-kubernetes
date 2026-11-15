@@ -58,6 +58,10 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/logoutput", app.handleLogoutput)
 
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
 	addr := fmt.Sprintf(":%s", port)
 
 	server := &http.Server{
