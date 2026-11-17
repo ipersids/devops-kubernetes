@@ -77,12 +77,8 @@ func main() {
 	log.Println("Connected to PostgreSQL")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /pingpong", app.handleRoot)
+	mux.HandleFunc("GET /", app.handleRoot)
 	mux.HandleFunc("GET /pings", app.handlePings)
-
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
 
 	addr := fmt.Sprintf(":%s", port)
 

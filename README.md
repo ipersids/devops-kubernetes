@@ -51,7 +51,7 @@ kubectl apply -f todo_app/manifests/todoapp-config.yaml
 kubectl apply -f todo_app/manifests/persistentvolumeclaim.yaml
 kubectl apply -f todo_app/manifests
 
-kubectl apply -f todo_backend/manifests/todobackeng-config.yaml
+kubectl apply -f todo_backend/manifests/todobackend-config.yaml
 kubectl apply -f todo_backend/manifests/database.yaml
 kubectl apply -f todo_backend/manifests
 
@@ -62,7 +62,7 @@ kubectl apply -f pingpong/manifests/pingpong-config.yaml
 kubectl apply -f pingpong/manifests/database.yaml
 kubectl apply -f pingpong/manifests
 
-kubectl apply -f  todo_cron/manifests/todo-cron.yaml
+kubectl apply -f todo_cron/manifests/todo-cron.yaml
 ```
 
 Check that the storage and pods are ready:
@@ -88,7 +88,7 @@ Open the apps through Ingress:
 
 #### 5. Enable monitoring using Grafana
 
-Follow instractions from [monitoring README.md](https://github.com/ipersids/devops-kubernetes/tree/main/monitoring/README.md)
+Follow the instructions in the [monitoring README](https://github.com/ipersids/devops-kubernetes/tree/main/monitoring/README.md).
 
 ## Course tasks
 
@@ -105,18 +105,19 @@ Follow instractions from [monitoring README.md](https://github.com/ipersids/devo
 | [1.9](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [1.9](https://github.com/ipersids/devops-kubernetes/tree/1.9) | Develop a second application that simply responds with "pong 0" to a GET request and increases a counter. |
 | [1.10](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [1.10](https://github.com/ipersids/devops-kubernetes/tree/1.10) | Split the Log output app into two containers in one pod and add a shared volume (emptyDir). |
 | [1.11](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [1.11](https://github.com/ipersids/devops-kubernetes/tree/1.11) | Share data between "Ping-pong" and "Log output" applications using persistent volumes. |
-| [1.12](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.12](https://github.com/ipersids/devops-kubernetes/tree/1.12) | Get a random picture from Lorem Picsum and display it in Todo app, update picture every 10 minutes. |
-| [1.13](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.13](https://github.com/ipersids/devops-kubernetes/tree/1.13) | Update a Todo app functionality. |
+| [1.12](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.12](https://github.com/ipersids/devops-kubernetes/tree/1.12) | Get a random picture from Lorem Picsum, display it in the Todo app, and update it every 10 minutes. |
+| [1.13](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [1.13](https://github.com/ipersids/devops-kubernetes/tree/1.13) | Update the Todo app's functionality. |
 | [2.1](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.1](https://github.com/ipersids/devops-kubernetes/tree/2.1) | Connect the Log output application and the Ping-pong application with HTTP. Remove the shared volume between those two applications. |
 | [2.2](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.2](https://github.com/ipersids/devops-kubernetes/tree/2.2) | Create a Todo backend service. It should have a GET /todos endpoint for fetching the list of todos and a POST /todos endpoint for creating a new todo. |
-| [2.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.3](https://github.com/ipersids/devops-kubernetes/tree/2.3) | Move the Log output and Pingpong apps to `exercises` namespace. |
-| [2.4](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.4](https://github.com/ipersids/devops-kubernetes/tree/2.4) | Move the Todo client and Todo backend to `project` namespace. |
+| [2.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.3](https://github.com/ipersids/devops-kubernetes/tree/2.3) | Move the Log output and Ping-pong apps to the `exercises` namespace. |
+| [2.4](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.4](https://github.com/ipersids/devops-kubernetes/tree/2.4) | Move the Todo client and Todo backend to the `project` namespace. |
 | [2.5](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [2.5](https://github.com/ipersids/devops-kubernetes/tree/2.5) | Create a ConfigMap for the Log output application to define one file information.txt and env variable MESSAGE. |
 | [2.6](https://github.com/ipersids/devops-kubernetes/tree/main/todo_app) | [2.6](https://github.com/ipersids/devops-kubernetes/tree/2.6) | Pass all the configurations to Todo as env variables that are defined either in a config map or in deployments. |
-| [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a stateful set (with one replica) and save the Pingpong application counter into the database. |
+| [2.7](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [2.7](https://github.com/ipersids/devops-kubernetes/tree/2.7) | Run a Postgres database as a StatefulSet (with one replica) and save the Ping-pong application's counter in the database. |
 | [2.8](https://github.com/ipersids/devops-kubernetes/tree/main/todo_backend) | [2.8](https://github.com/ipersids/devops-kubernetes/tree/2.8) | Run a Postgres database as a stateful set (with one replica) and save the Todo tasks into the database. |
 | [2.9](https://github.com/ipersids/devops-kubernetes/tree/main/todo_cron) | [2.9](https://github.com/ipersids/devops-kubernetes/tree/2.9) | Create a CronJob that generates a new todo every hour to remind to read a random wikipedia article. |
 | [2.10](https://github.com/ipersids/devops-kubernetes/tree/main/monitoring) | [2.10](https://github.com/ipersids/devops-kubernetes/tree/2.10) | Add request logging so that you can monitor every todo that is sent to the backend. |
-| [3.1](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [release 3.1](https://github.com/ipersids/devops-kubernetes/tree/3.11) | Deploy Ping-pong application into GKE. |
-| [3.2](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [3.2](https://github.com/ipersids/devops-kubernetes/tree/3.2) | Deploy the "Log output" and "Ping-pong" applications into GKE and expose it with Ingress. "Ping-pong" responds from `/pingpong` path. |
+| [3.1](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [release 3.1](https://github.com/ipersids/devops-kubernetes/tree/3.11) | Deploy the Ping-pong application to GKE. |
+| [3.2](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [3.2](https://github.com/ipersids/devops-kubernetes/tree/3.2) | Deploy the "Log output" and "Ping-pong" applications to GKE and expose them with Ingress. "Ping-pong" responds at `/pingpong`. |
 | [3.3](https://github.com/ipersids/devops-kubernetes/tree/main/log_output) | [3.3](https://github.com/ipersids/devops-kubernetes/tree/3.3) | Replace the Ingress with Gateway API in the "Log output" and "Ping-pong" applications. |
+| [3.4](https://github.com/ipersids/devops-kubernetes/tree/main/pingpong) | [3.4](https://github.com/ipersids/devops-kubernetes/tree/3.4) | Move Ping-pong's counter increment handler to `/` and configure the HTTPRoute to rewrite `/pingpong` to `/`. |
