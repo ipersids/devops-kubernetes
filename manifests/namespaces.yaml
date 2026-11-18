@@ -10,6 +10,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: project
+  labels:
+    shared-gateway-access: "true"
 
 ---
 apiVersion: v1

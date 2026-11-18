@@ -4,7 +4,6 @@ metadata:
   name: file-claim
   namespace: project
 spec:
-  storageClassName: shared-kube-pv
   accessModes:
     - ReadWriteOnce
   resources:

@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: project
+
+resources:
+  - todo_app/manifests/todoapp-config.yaml
+  - todo_app/manifests/persistentvolumeclaim.yaml
+  - todo_app/manifests/deployment.yaml
+  - todo_app/manifests/service.yaml
+  - todo_app/manifests/route.yaml
+  - todo_backend/manifests/todobackend-config.yaml
+  - todo_backend/manifests/database.yaml
+  - todo_backend/manifests/deployment.yaml
+  - todo_backend/manifests/service.yaml
+  - todo_cron/manifests/todo-cron.yaml
+
+images:
+  - name: ipersids/todoapp
+    newTag: ex3.5-multiarch
+  - name: ipersids/todobackend
+    newTag: ex3.5-multiarch
+  - name: ipersids/todocron
+    newTag: ex3.5-multiarch
