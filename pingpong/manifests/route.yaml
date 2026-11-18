@@ -5,7 +5,7 @@ metadata:
   namespace: exercises
 spec:
   parentRefs:
-    - name: logoutput-gateway
+    - name: shared-gateway
       namespace: exercises
   rules:
     - matches:
