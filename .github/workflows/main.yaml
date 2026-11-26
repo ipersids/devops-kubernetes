@@ -72,13 +72,25 @@ jobs:
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v3
 
+      - name: "Get namespace name"
+        run: |
+          if [ "$BRANCH" = "main" ]
+          then
+            echo "NAMESPACE=project" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
+
       - name: Deploy App
         run: |
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
           kustomize edit set image $REPOSITORY/todoapp=$IMAGE_TAG_APP
           kustomize edit set image $REPOSITORY/todobackend=$IMAGE_TAG_BACKEND
           kustomize edit set image $REPOSITORY/todocron=$IMAGE_TAG_CRON
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/todoapp-dep -n project
-          kubectl rollout status deployment/todobackend-dep -n project
-          kubectl get cronjob todo-cron -n project
+          kubectl rollout status deployment/todoapp-dep
+          kubectl rollout status deployment/todobackend-dep
+          kubectl get cronjob todo-cron
           kubectl get services -o wide
