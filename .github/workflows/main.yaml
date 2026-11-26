@@ -2,6 +2,8 @@ name: Release application
 
 on:
   push:
+    branches:
+      - "**"
 
 permissions:
   contents: read
@@ -76,11 +78,12 @@ jobs:
         run: |
           if [ "$BRANCH" = "main" ]
           then
-            echo "NAMESPACE=project" >> $GITHUB_ENV
+            NAMESPACE="project"
           else
-            echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
+            NAMESPACE="$BRANCH"
           fi
-          kubectl create namespace $NAMESPACE || true
+          echo "NAMESPACE=$NAMESPACE" >> "$GITHUB_ENV"
+          kubectl create namespace "$NAMESPACE" || true
 
       - name: "Apply database access"
         if: github.ref_type == 'branch' && github.ref_name != 'main'
