@@ -45,6 +45,22 @@ jobs:
           project_id: "${{ env.PROJECT_ID }}"
           location: "${{ env.GKE_ZONE }}"
 
+      - name: "Get namespace name"
+        run: |
+          if [ "$BRANCH" = "main" ]
+          then
+            echo "NAMESPACE=project" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
+
+      - name: "temporary: check permitions from github actions"
+        run: |
+          kubectl auth can-i get secret/todobackend-secret -n project
+          kubectl auth can-i create secrets -n "$NAMESPACE"
+          kubectl auth can-i patch secrets -n "$NAMESPACE"
+          exit 1
+
       - name: "Form the image names"
         run: |
           echo "IMAGE_TAG_APP=$REGISTRY/$PROJECT_ID/$REPOSITORY/todoapp:$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
@@ -71,15 +87,6 @@ jobs:
 
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v3
-
-      - name: "Get namespace name"
-        run: |
-          if [ "$BRANCH" = "main" ]
-          then
-            echo "NAMESPACE=project" >> $GITHUB_ENV
-          else
-            echo "NAMESPACE=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          fi
 
       - name: Deploy App
         run: |
