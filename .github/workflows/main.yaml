@@ -72,13 +72,42 @@ jobs:
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v3
 
+      - name: "Create namespace"
+        run: |
+          if [ "$BRANCH" = "main" ]
+          then
+            echo "NAMESPACE=project" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
+          fi
+          kubectl create namespace $NAMESPACE || true
+
+      - name: "Apply database access"
+        if: github.ref_type == 'branch' && github.ref_name != 'main'
+        run: |
+          set -euo pipefail
+          kubectl get secret todobackend-secret -n project -o json |
+            jq --arg ns "$NAMESPACE" '{
+              apiVersion: .apiVersion,
+              kind: .kind,
+              metadata: {
+                name: .metadata.name,
+                namespace: $ns
+              },
+              type: .type,
+              data: .data
+            }' |
+            kubectl apply -f -
+
       - name: Deploy App
         run: |
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
           kustomize edit set image $REPOSITORY/todoapp=$IMAGE_TAG_APP
           kustomize edit set image $REPOSITORY/todobackend=$IMAGE_TAG_BACKEND
           kustomize edit set image $REPOSITORY/todocron=$IMAGE_TAG_CRON
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment/todoapp-dep -n project
-          kubectl rollout status deployment/todobackend-dep -n project
-          kubectl get cronjob todo-cron -n project
+          kubectl rollout status deployment/todoapp-dep
+          kubectl rollout status deployment/todobackend-dep
+          kubectl get cronjob todo-cron
           kubectl get services -o wide
