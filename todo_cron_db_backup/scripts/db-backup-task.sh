@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
-if [ $URL ]
-then
-  pg_dump -v $URL > /usr/src/app/backup.sql
+: "${PGHOST:?Missing PGHOST}"
+: "${PGPORT:?Missing PGPORT}"
+: "${PGDATABASE:?Missing PGDATABASE}"
+: "${PGUSER:?Missing PGUSER}"
+: "${PGPASSWORD:?Missing PGPASSWORD}"
 
-  echo "Not sending the dump actually anywhere"
-  # curl -F ‘data=@/usr/src/app/backup.sql’ https://somewhere
-fi
+pg_dump -v > /tmp/backup.sql
+
+backup_name="backup-$(date +%s).sql"
+gcloud storage cp /tmp/backup.sql "gs://project-db-backups/$backup_name"

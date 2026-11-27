@@ -9,10 +9,39 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: todo-backup
+          nodeSelector:
+            iam.gke.io/gke-metadata-server-enabled: "true"
           restartPolicy: Never
 
           containers:
             - name: db-backup-task
-              image: ipersids/todobackup:ex3.10
+              image: ipersids/todobackup:ex3.10-amd64
               command:
                 - /usr/local/bin/db-backup-task.sh
+              env:
+                - name: PGDATABASE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: todobackend-conf
+                      key: postgres_db
+                - name: PGHOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: todobackend-conf
+                      key: postgres_host
+                - name: PGPORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: todobackend-conf
+                      key: postgres_port
+                - name: PGUSER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: todobackend-conf
+                      key: postgres_user
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: todobackend-secret
+                      key: POSTGRES_PASSWORD
