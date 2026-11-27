@@ -126,6 +126,7 @@ Follow the instructions in the [monitoring README](https://github.com/ipersids/d
 | [3.7](https://github.com/ipersids/devops-kubernetes/tree/main/.github/workflows) | [3.7](https://github.com/ipersids/devops-kubernetes/tree/3.7) | Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the namespace project. |
 | [3.8](https://github.com/ipersids/devops-kubernetes/tree/main/.github/workflows) | [3.8](https://github.com/ipersids/devops-kubernetes/tree/3.8) | Create a new workflow so that deleting a branch deletes the environment. |
 | [3.9](#DBaaS-vs-DIY) | [3.9](https://github.com/ipersids/devops-kubernetes/tree/3.9) | Do a pros/cons comparison of the DBaaS and DIY solutions. |
+| [3.10](https://github.com/ipersids/devops-kubernetes/tree/main/todo_cron_db_backup) | [3.10](https://github.com/ipersids/devops-kubernetes/tree/3.10) | Create a CronJob that makes a backup of your todo database (once per 24 hours) and saves it to Google Object Storage. |
 
 <a id="DBaaS-vs-DIY"></a>
 ## DBaaS vs DIY

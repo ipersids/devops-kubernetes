@@ -22,3 +22,4 @@ images:
     newTag: ex3.5-multiarch
   - name: ipersids/todocron
     newTag: ex3.5-multiarch
+  - name: ipersids/todobackupcron
