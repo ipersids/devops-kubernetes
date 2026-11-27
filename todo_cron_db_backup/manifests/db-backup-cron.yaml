@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: todo-backup-cron
+  namespace: project
+spec:
+  schedule: "0 0 * * *" # Every day
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+            - name: db-backup-task
+              image: ipersids/todobackup:ex3.10
+              command:
+                - /usr/local/bin/db-backup-task.sh

@@ -14,6 +14,7 @@ resources:
   - todo_backend/manifests/deployment.yaml
   - todo_backend/manifests/service.yaml
   - todo_cron/manifests/todo-cron.yaml
+  - todo_cron_db_backup/manifests/db-backup-cron.yaml
 
 images:
   - name: ipersids/todoapp
@@ -22,3 +23,4 @@ images:
     newTag: ex3.5-multiarch
   - name: ipersids/todocron
     newTag: ex3.5-multiarch
+  - name: ipersids/todobackupcron
