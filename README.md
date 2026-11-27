@@ -125,3 +125,38 @@ Follow the instructions in the [monitoring README](https://github.com/ipersids/d
 | [3.6](https://github.com/ipersids/devops-kubernetes/tree/main/.github/workflows) | [3.6](https://github.com/ipersids/devops-kubernetes/tree/3.6) | Setup automatic deployment for the project using GitHub Actions. |
 | [3.7](https://github.com/ipersids/devops-kubernetes/tree/main/.github/workflows) | [3.7](https://github.com/ipersids/devops-kubernetes/tree/3.7) | Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the namespace project. |
 | [3.8](https://github.com/ipersids/devops-kubernetes/tree/main/.github/workflows) | [3.8](https://github.com/ipersids/devops-kubernetes/tree/3.8) | Create a new workflow so that deleting a branch deletes the environment. |
+| [3.9](#DBaaS-vs-DIY) | [3.9](https://github.com/ipersids/devops-kubernetes/tree/3.9) | Do a pros/cons comparison of the DBaaS and DIY solutions. |
+
+<a id="DBaaS-vs-DIY"></a>
+## DBaaS vs DIY
+
+Database-as-a-service (DBaaS) is a managed database model provided as a service. DBaaS typically runs on a cloud computing platform and allows users to pay a cloud provider for database services and computing resources. This helps users focus more on development and outsource database management to the provider’s team.
+
+Do-it-Yourself (DIY) means a self-hosted model where the operational work to set up and maintain the database is handled by an in-house team. It gives more control over infrastructure, compute, storage, network security, backups and software upgrades.
+
+| Topic | Database-as-a-service | Self-Hosted Database |
+| :---: | :-------------------: | :------------------- |
+| Cost | Depends on compute, storage and managed features, including the provider’s management fees. | Infrastructure may cost less, but the overall cost includes operational work and engineering time to build and maintain the database infrastructure. |
+| Setup | Choose a vendor, create an instance and configure access — usually fast and simple. | Choose infrastructure, configure the database, storage, networking, secrets and deployment — requires planning and development. |
+| Maintenance | The provider’s team specialises in databases and handles routine maintenance. The client’s team still plans application compatibility, upgrades and maintenance timing. | An in-house team plans and handles database updates, patches and upgrades. Additional coordination with other development teams may be needed. |
+| Backups and recovery | Managed backup and restore tools work according to the client’s configuration. The client is responsible for testing recovery. | The in-house team is responsible for creating backup jobs, storing backups and testing recovery. |
+| Availability | Managed replication and automatic failover can reduce downtime when high availability is configured. | To ensure high availability, the team needs to configure replication, failover and routing, and perform failure testing. Backups are also needed for data recovery. A single database pod has downtime during recovery. |
+| Security | The provider manages infrastructure security. The client is responsible for managing users, permissions, connections and data access. | In-house team manage database security as well as its deployment configuration. |
+| Control | Limited by the vendor, which provides a high-level abstraction over the database. | More control over low-level database configuration, hosting and security features. |
+| Monitoring | Built-in metrics and logs are available. The client still needs to configure useful alerts. | Additional work is needed to install and configure monitoring tools and alerts. |
+| Required skills | 	Less database operations knowledge is needed, but database design and SQL skills remain necessary. A separate database operations team may not be needed. | Requires database, storage, networking, backup and recovery knowledge. Kubernetes knowledge is needed if the database runs in Kubernetes. Team size may grow with business needs. |
+
+
+**In the DBaaS model**, vendors handle the underlying infrastructure, database engine maintenance and infrastructure security, and provide automated backups and recovery tools. The vendor creates a high-level abstraction over the database and provides user-friendly tools to configure it, monitor metrics and logs, and set up alerts. Clients still need to configure access, backup settings and recovery requirements.
+
+This helps clients focus more on developing their core product and can reduce the need for a separate database operations team. DBaaS solutions are usually fast and simple to set up, which makes them a good choice when development speed is more important than low-level control over the database infrastructure.
+
+However, there are some disadvantages as well. Vendors include management costs in their prices and can change prices over time. Less control over the database infrastructure can limit some business needs and desired database features or configurations. Another major risk is vendor lock-in, especially when the application depends on vendor-specific features. This can make it difficult to move away later when the service or its prices no longer meet business needs.
+
+**In the DIY model**, the in-house team handles database setup, maintenance, security, backups and recovery. This requires more planning, technical knowledge and coordination with other development teams. Monitoring tools, alerts, replication and failover also need to be configured and maintained by the team.
+
+This gives the business more control over database infrastructure, versions, extensions and configuration. DIY can be a good choice when specific business needs require features or settings that managed services do not support. It also gives more freedom to choose hosting and move the database to another provider.
+
+However, this control comes with additional responsibilities. Infrastructure costs may be lower, but the overall cost includes engineering time and ongoing operational work. Updates, failures and recovery can take time away from developing the core product. The team also needs to test backups and failure scenarios regularly, because running the database successfully does not guarantee that its data can be recovered after a problem.
+
+**Which approach works better depends on business needs**. Small startups may choose the DBaaS model because of limited team size and the need for fast development. Other companies with high database costs, specific technical needs or strict "no third-party" requirements for data storage may consider a self-hosted database a better choice. Both options should be compared based on the required level of control, total costs and the team’s ability to manage the database.
